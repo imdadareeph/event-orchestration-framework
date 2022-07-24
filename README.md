@@ -4,9 +4,11 @@ event-orchestration-framework using solace pubsub
 [![Java CI with Maven](https://github.com/imdadareeph/event-orchestration-framework/actions/workflows/maven.yml/badge.svg?branch=main&event=push)](https://github.com/imdadareeph/event-orchestration-framework/actions/workflows/maven.yml)
 
 
-# Dependency
+## Dependency
 
-## Maven
+### Maven
+
+Add the library as dependency in the project
 
 ```xml
 <dependency>
@@ -14,6 +16,12 @@ event-orchestration-framework using solace pubsub
   <artifactId>event-orchestration-framework</artifactId>
   <version>1.0</version>
 </dependency>
+```
+
+### BUILD and RUN
+```
+mvn clean install -Dmaven.test.skip=true
+java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5007 -jar target/event-orchestration-framework-1.0.1.jar --spring.profiles.active=local --server.port=8888
 ```
 
 

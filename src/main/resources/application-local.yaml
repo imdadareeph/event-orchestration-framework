@@ -1,0 +1,67 @@
+spring:
+  application:
+      name: "event-orchestration-framework"
+  cloud:
+    function:
+      definition: consume;uppercase;eventFunction;publisher;processor;eonsumer
+    stream:
+      binders:
+      #This section of the configuration tells the solace binder how to connect to the solace event broker/mesh
+        solace-broker:
+          type: solace
+          environment:
+            solace:
+              java:
+                host: tcps://mrljva18cl7ud.messaging.solace.cloud:55443
+                msgVpn: fulfilment-services
+                clientUsername: solace-cloud-client
+                clientPassword:
+                connectRetries: 3
+                connectRetriesPerHost: 0
+                reconnectRetries: 3
+      bindings:
+      #The bindings section is used to define your input and output channels.
+        eventFunction-in-0:
+          destination: EVENT.QUEUE.NAME
+          #The presence of "group" tells the binder to follow the "consumer group" pattern; if not present the "publish-subscribe" pattern will be used.
+          group: PROCESSOR
+        eventFunction-out-0:
+          destination: event/topic/accept
+
+        consume-in-0:
+          destination: Q.CONSUME
+          group: CONSUME.GRP
+        uppercase-in-0:
+          destination: Q.UPPERCASE
+          group: CONSUME.GRP
+        uppercase-out-0:
+          destination: spring/sample/string/uppercase
+          group: CONSUME.GRP
+
+        publisher-out-0:
+          destination: publisher-out-processor-in
+          group: EVENT.CONSUMER.GRP
+        processor-in-0:
+          destination: publisher-out-processor-in
+          group: EVENT.CONSUMER.GRP
+        processor-out-0:
+          destination: processor-out-consumer-in
+          group: EVENT.CONSUMER.GRP
+        eonsumer-in-0:
+          destination: processor-out-consumer-in
+          group: EVENT.CONSUMER.GRP
+      solace:
+      #The solace bindings section allows for solace specific configurations to be applied to a channel. A common example is adding topic subscriptions to a queue as shown below.
+        bindings:
+          eventFunction-in-0:
+            consumer:
+              queueAdditionalSubscriptions: event-function/topic/subscriptions,wildcards/*/accepted/>
+              autoBinderErrorQueue: true
+
+          consume-in-0:
+            consumer:
+              queueAdditionalSubscriptions: consumer-in/qtopic/subscription/1
+          uppercase-in-0:
+            consumer:
+              queueAdditionalSubscriptions: uppercase/qtopic/subscription/2,wildcards/*/accepted/>
+

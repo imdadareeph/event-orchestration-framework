@@ -1,0 +1,12 @@
+
+server:
+  port: 8888
+#
+#Dsun:
+#  security:
+#    krb5:
+#      debug: true
+logging:
+  level:
+    root: DEBUG
+    # org.springframework.web: DEBUG
